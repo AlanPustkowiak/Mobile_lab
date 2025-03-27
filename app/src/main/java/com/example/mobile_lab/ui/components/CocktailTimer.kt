@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CoctailTimer(durationSeconds: Int){
+fun CocktailTimer(durationSeconds: Int){
     var timeLeft by remember { mutableStateOf(durationSeconds) }
     var isRunning by remember { mutableStateOf(false) }
     var isPaused by remember { mutableStateOf(false) }
