@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mobile_lab.ui.screens.CocktailDetailsScreen
+import com.example.mobile_lab.ui.screens.CocktailListScreen
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 @Composable
 fun AppNavigation() {
@@ -24,10 +28,10 @@ fun AppNavigation() {
             )
         ){
             backStackEntry ->
-            val cocktailId = backStackEntry.arguments?.getString("cocktailId")
-            CocktailDetailScreen(
+            val cocktailId = backStackEntry.arguments?.getString("cocktailId") ?: ""
+            CocktailDetailsScreen(
                 cocktailId = cocktailId,
-                onBackClick = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() }
             )
         }
     }
