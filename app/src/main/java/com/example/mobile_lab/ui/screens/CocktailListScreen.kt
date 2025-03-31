@@ -12,20 +12,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.example.mobile_lab.data.CocktailRepository
 import com.example.mobile_lab.model.Cocktail
@@ -35,11 +38,41 @@ import com.example.mobile_lab.model.Cocktail
 fun CocktailListScreen(onCocktailClick: (String) -> Unit){
     val repository = remember { CocktailRepository() }
     val cocktails = remember { repository.getCocktails() }
+    val searchQuery = remember { mutableStateOf("") }
+    val isSearching = remember { mutableStateOf(false) }
+
+    val filteredCocktails = remember(searchQuery.value, cocktails) {
+        if (searchQuery.value.isNotEmpty()) {
+            cocktails.filter { it.name.contains(searchQuery.value, ignoreCase = true) }
+        } else {
+            cocktails
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Książka barmańska")},
+                title = {
+                    if (isSearching.value){
+                      TextField(
+                          value = searchQuery.value,
+                          onValueChange = { searchQuery.value = it },
+                          label = { Text("Wyszukiwanie") },
+                          singleLine = true,
+                          modifier = Modifier.fillMaxWidth()
+                      )
+                    }else {
+                        Text("Książka barmańska")
+                    }
+                        },
+                actions = {
+                    IconButton(onClick = { isSearching.value = !isSearching.value }) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Wyszukaj"
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -53,7 +86,7 @@ fun CocktailListScreen(onCocktailClick: (String) -> Unit){
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(cocktails) { cocktail ->
+            items(filteredCocktails) { cocktail ->
                 CocktailItem(
                     cocktail = cocktail,
                     onClick = { onCocktailClick(cocktail.id) })
@@ -62,7 +95,6 @@ fun CocktailListScreen(onCocktailClick: (String) -> Unit){
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CocktailItem(cocktail: Cocktail, onClick: () -> Unit){
     Card(
