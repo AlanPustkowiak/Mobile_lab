@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+//TODO - zmiana na viewmodel
 @Composable
 fun CocktailTimer(durationSeconds: Int){
     var timeLeft by remember { mutableStateOf(durationSeconds) }
