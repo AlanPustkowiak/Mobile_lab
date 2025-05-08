@@ -1,0 +1,54 @@
+[
+  {
+    "id": "mojito",
+    "name": "Mojito",
+    "imageUrl": null,
+    "ingredients": [
+      {"name": "Biały rum", "amount": "60 ml"},
+      {"name": "Sok z limonki", "amount": "30 ml"},
+      {"name": "Cukier", "amount": "2 łyżeczki"},
+      {"name": "Mięta", "amount": "kilka listków"},
+      {"name": "Woda gazowana", "amount": "do uzupełnienia"}
+    ],
+    "steps": [
+      {"description": "Ugnij listki mięty w szklance", "timerDurationSeconds": 0},
+      {"description": "Dodaj rum, sok z limonki i cukier", "timerDurationSeconds": 0},
+      {"description": "Wymieszaj dokładnie, aż cukier się rozpuści", "timerDurationSeconds": 30},
+      {"description": "Dodaj lód i uzupełnij wodą gazowaną", "timerDurationSeconds": 0}
+    ]
+  },
+  {
+    "id": "margarita",
+    "name": "Margarita",
+    "imageUrl": null,
+    "ingredients": [
+      {"name": "Tequila", "amount": "50 ml"},
+      {"name": "Triple sec", "amount": "25 ml"},
+      {"name": "Sok z limonki", "amount": "25 ml"},
+      {"name": "Sól", "amount": "do dekoracji"}
+    ],
+    "steps": [
+      {"description": "Natrzyj krawędź kieliszka limonką i zanurz w soli", "timerDurationSeconds": 0},
+      {"description": "Wstrząsaj tequilę, triple sec i sok z limonki z lodem", "timerDurationSeconds": 15},
+      {"description": "Przefiltruj do kieliszka", "timerDurationSeconds": 0}
+    ]
+  },
+  {
+    "id": "old_fashioned",
+    "name": "Old Fashioned",
+    "imageUrl": null,
+    "ingredients": [
+      {"name": "Bourbon", "amount": "60 ml"},
+      {"name": "Cukier trzcinowy", "amount": "1 kostka"},
+      {"name": "Angostura Bitters", "amount": "2-3 krople"},
+      {"name": "Skórka pomarańczowa", "amount": "1 plasterek"}
+    ],
+    "steps": [
+      {"description": "Umieść kostkę cukru w szklance i nasącz ją Angostura Bitters", "timerDurationSeconds": 0},
+      {"description": "Dodaj odrobinę wody i rozgnieć cukier", "timerDurationSeconds": 0},
+      {"description": "Dodaj kostki lodu i wlej bourbon", "timerDurationSeconds": 0},
+      {"description": "Mieszaj przez 30 sekund", "timerDurationSeconds": 30},
+      {"description": "Udekoruj skórką pomarańczową", "timerDurationSeconds": 0}
+    ]
+  }
+]
