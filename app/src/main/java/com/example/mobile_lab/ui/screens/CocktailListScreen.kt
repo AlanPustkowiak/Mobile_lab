@@ -38,6 +38,7 @@ import com.example.mobile_lab.model.Cocktail
 fun CocktailListScreen(onCocktailClick: (String) -> Unit){
     val repository = remember { CocktailRepository() }
     val cocktails = remember { repository.getCocktails() }
+
     val searchQuery = remember { mutableStateOf("") }
     val isSearching = remember { mutableStateOf(false) }
 

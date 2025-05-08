@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.example.mobile_lab.data.CocktailRepository
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.ui.text.font.FontWeight
 import com.example.mobile_lab.model.Cocktail
 import com.example.mobile_lab.ui.components.CocktailTimer
@@ -96,7 +96,7 @@ fun CocktailDetails(cocktail: Cocktail, modifier: Modifier = Modifier){
                 Text(text = ingredient.name)
                 Text(text = ingredient.amount)
             }
-            Divider(modifier = Modifier.padding(vertical = 4.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
         }
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -119,7 +119,8 @@ fun CocktailDetails(cocktail: Cocktail, modifier: Modifier = Modifier){
 
                 if (step.timerDurationSeconds > 0){
                     Spacer(modifier = Modifier.height(8.dp))
-                    CocktailTimer(durationSeconds = step.timerDurationSeconds)
+                    CocktailTimer(durationSeconds = step.timerDurationSeconds,
+                        stepId = "${cocktail.id}_step_$index")
                 }
             }
         }
