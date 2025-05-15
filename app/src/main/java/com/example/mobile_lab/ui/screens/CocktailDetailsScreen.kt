@@ -27,6 +27,9 @@ import com.example.mobile_lab.data.CocktailRepository
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import com.example.mobile_lab.model.Cocktail
 import com.example.mobile_lab.ui.components.CocktailTimer
@@ -34,8 +37,9 @@ import com.example.mobile_lab.ui.components.CocktailTimer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CocktailDetailsScreen(cocktailId: String, onNavigateBack: () -> Unit){
-    val repository =  remember { CocktailRepository() }
-    val cocktail = remember { repository.getCocktailById(cocktailId) }
+    val context = LocalContext.current
+    val repository =  remember { CocktailRepository(context) }
+    val cocktail by repository.getCocktailById(cocktailId).collectAsState(initial = null)
 
     Scaffold(
         topBar = {
@@ -57,7 +61,7 @@ fun CocktailDetailsScreen(cocktailId: String, onNavigateBack: () -> Unit){
     ) { paddingValues ->
         if (cocktail != null) {
             CocktailDetails(
-                cocktail = cocktail,
+                cocktail = cocktail!!,
                 modifier = Modifier.padding(paddingValues)
             )
         }

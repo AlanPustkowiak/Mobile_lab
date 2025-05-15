@@ -25,10 +25,13 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.mobile_lab.data.CocktailRepository
 import com.example.mobile_lab.model.Cocktail
@@ -36,8 +39,9 @@ import com.example.mobile_lab.model.Cocktail
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CocktailListScreen(onCocktailClick: (String) -> Unit){
-    val repository = remember { CocktailRepository() }
-    val cocktails = remember { repository.getCocktails() }
+    val context = LocalContext.current
+    val repository = remember { CocktailRepository(context) }
+    val cocktails by repository.getAllCocktails().collectAsState(initial = emptyList())
 
     val searchQuery = remember { mutableStateOf("") }
     val isSearching = remember { mutableStateOf(false) }

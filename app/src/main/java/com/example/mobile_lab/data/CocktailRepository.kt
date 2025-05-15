@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.room.Query
 import com.example.mobile_lab.data.db.CocktailDatabase
 import com.example.mobile_lab.data.db.mappers.toCocktail
+import com.example.mobile_lab.data.db.mappers.toCocktailEntity
+import com.example.mobile_lab.data.db.mappers.toIngredientEntities
+import com.example.mobile_lab.data.db.mappers.toStepEntities
 import com.example.mobile_lab.model.Cocktail
 import com.example.mobile_lab.model.Ingredient
 import com.example.mobile_lab.model.Step
@@ -30,4 +33,11 @@ class CocktailRepository(private val context: Context) {
         }
     }
 
+    suspend fun insertCocktail(cocktail: Cocktail){
+        cocktailDao.insertCocktailWithDetails(
+            cocktail = cocktail.toCocktailEntity(),
+            ingredients = cocktail.toIngredientEntities(),
+            steps = cocktail.toStepEntities()
+        )
+    }
 }
