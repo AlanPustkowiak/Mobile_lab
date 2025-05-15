@@ -9,7 +9,7 @@ import com.example.mobile_lab.model.Ingredient
 import com.example.mobile_lab.model.Step
 
 fun CocktailWithIngredientsAndSteps.toCocktail(): Cocktail {
-    val sortedSteps: steps.sortedBy {it.stepOrder}
+    val sortedSteps = steps.sortedBy {it.stepOrder}
 
     return Cocktail(
         id = cocktail.id,
@@ -42,3 +42,23 @@ fun Cocktail.toCocktailEntity(): CocktailEntity{
     )
 }
 
+fun Cocktail.toIngredientEntities(): List<IngredientEntity> {
+    return ingredients.map{
+        IngredientEntity(
+            cocktailId = id,
+            name = it.name,
+            amount = it.amount
+        )
+    }
+}
+
+fun Cocktail.toStepEntities(): List<StepEntity> {
+    return steps.mapIndexed{ index, step ->
+        StepEntity(
+            cocktailId = id,
+            description = step.description,
+            timerDurationSeconds = step.timerDurationSeconds,
+            stepOrder = index
+        )
+    }
+}
