@@ -24,10 +24,25 @@ class CocktailDatabaseCallback(
         }
     }
 
+    // Dodanie obsługi destrukcyjnej migracji
+    override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
+        super.onDestructiveMigration(db)
+        CoroutineScope(Dispatchers.IO).launch {
+            populateDatabase(context)
+        }
+    }
+
     private suspend fun populateDatabase(context: Context){
         try {
             val database = CocktailDatabase.getDatabase(context)
             val cocktailDao = database.cocktailDao()
+
+            // Sprawdzenie czy baza jest już wypełniona
+            val existingCount = cocktailDao.getCocktailCount()
+            if (existingCount > 0) {
+                Log.d("CocktailDatabase", "Baza danych zawiera już $existingCount koktajli, pomijam wypełnianie")
+                return
+            }
 
             val inputStream = context.resources.openRawResource(R.raw.sample_cocktails)
             val jsonString = inputStream.bufferedReader().use { it.readText() }
@@ -35,13 +50,15 @@ class CocktailDatabaseCallback(
             val cocktailsType = object : TypeToken<List<CocktailJson>>() {}.type
             val cocktails: List<CocktailJson> = Gson().fromJson(jsonString, cocktailsType)
 
-            cocktails.forEach {
-                cocktailJson -> val cocktailEntities = CocktailEntity(
+            Log.d("CocktailDatabase", "Znaleziono ${cocktails.size} koktajli do wczytania")
+
+            cocktails.forEach { cocktailJson ->
+                val cocktailEntities = CocktailEntity(
                     id = cocktailJson.id,
                     name = cocktailJson.name,
                     imageUrl = cocktailJson.imageUrl
                 )
-                val ingredientEntities = cocktailJson.ingredients.map{
+                val ingredientEntities = cocktailJson.ingredients.map {
                     IngredientEntity(
                         cocktailId = cocktailJson.id,
                         name = it.name,
@@ -63,6 +80,7 @@ class CocktailDatabaseCallback(
                     steps = stepEntities
                 )
             }
+            Log.d("CocktailDatabase", "Baza danych została pomyślnie wypełniona")
         } catch (e: Exception){
             Log.e("CocktailDatabase", "Błąd podczas populowania bazy: ${e.message}" )
         }
@@ -86,13 +104,3 @@ private data class StepsJson(
     val description: String,
     val timerDurationSeconds: Int
 )
-
-
-
-
-
-
-
-
-
-

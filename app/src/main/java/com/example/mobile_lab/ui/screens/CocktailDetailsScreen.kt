@@ -31,6 +31,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.mobile_lab.model.Cocktail
 import com.example.mobile_lab.ui.components.CocktailTimer
 
@@ -86,6 +89,19 @@ fun CocktailDetails(cocktail: Cocktail, modifier: Modifier = Modifier){
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Duży obrazek koktajlu
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(cocktail.imageUrl ?: "https://via.placeholder.com/400x300?text=Cocktail")
+                .crossfade(true)
+                .build(),
+            contentDescription = cocktail.name,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp)
+        )
+
         Text(
             text = "Składniki:",
             style = MaterialTheme.typography.titleLarge,

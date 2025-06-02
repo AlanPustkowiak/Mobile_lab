@@ -15,7 +15,7 @@ import com.example.mobile_lab.data.db.entities.StepEntity
         IngredientEntity::class,
         StepEntity::class
     ],
-    version = 1
+    version = 2
 )
 abstract class CocktailDatabase : RoomDatabase() {
     abstract fun cocktailDao(): CocktailDao
@@ -31,6 +31,7 @@ abstract class CocktailDatabase : RoomDatabase() {
                     CocktailDatabase::class.java,
                     "cocktail_database"
                 )
+                    .fallbackToDestructiveMigration() // Dodanie destrukcyjnej migracji
                     .addCallback(CocktailDatabaseCallback(context.applicationContext))
                     .build()
                 INSTANCE = instance
@@ -39,3 +40,4 @@ abstract class CocktailDatabase : RoomDatabase() {
         }
     }
 }
+

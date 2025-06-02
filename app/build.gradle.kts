@@ -49,6 +49,9 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // Coil - biblioteka do ładowania obrazków
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -66,3 +69,4 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+

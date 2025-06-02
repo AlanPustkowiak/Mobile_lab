@@ -17,9 +17,24 @@ interface CocktailDao {
     @Query("Select * from cocktails")
     fun getAllCocktailsWithDetails(): Flow<List<CocktailWithIngredientsAndSteps>>
 
+    @Query("SELECT * FROM cocktails")
+    suspend fun getAllCocktails(): List<CocktailEntity>
+
     @Transaction
     @Query("Select * from cocktails where id=:cocktailId")
     fun getCocktailWithDetailsById(cocktailId: String): Flow<CocktailWithIngredientsAndSteps?>
+
+    @Query("Select count(*) from cocktails")
+    suspend fun getCocktailCount(): Int
+
+    @Query("Delete from cocktails")
+    suspend fun deleteAllCocktails()
+
+    @Query("Delete from ingredients")
+    suspend fun deleteAllIngredients()
+
+    @Query("Delete from steps")
+    suspend fun deleteAllSteps()
 
     @Query("Select * from cocktails where name like '%' || :query || '%'")
     fun searchCocktauls(query: String): Flow<List<CocktailEntity>>

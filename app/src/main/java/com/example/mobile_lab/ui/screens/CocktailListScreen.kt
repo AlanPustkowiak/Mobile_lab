@@ -1,20 +1,27 @@
 package com.example.mobile_lab.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,10 +38,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.SubcomposeAsyncImage
 import com.example.mobile_lab.data.CocktailRepository
 import com.example.mobile_lab.model.Cocktail
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,11 +83,28 @@ fun CocktailListScreen(onCocktailClick: (String) -> Unit){
                     }else {
                         Text("Książka barmańska")
                     }
-                        },
+                },
                 actions = {
+                    if (!isSearching.value) {
+                        // Przycisk resetowania bazy danych
+                        IconButton(
+                            onClick = {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    repository.resetDatabase()
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "Resetuj bazę danych"
+                            )
+                        }
+                    }
+
+                    // Przycisk wyszukiwania
                     IconButton(onClick = { isSearching.value = !isSearching.value }) {
                         Icon(
-                            imageVector = Icons.Default.Search,
+                            imageVector = if (isSearching.value) Icons.Default.ShoppingCart else Icons.Default.Search,
                             contentDescription = "Wyszukaj"
                         )
                     }
@@ -84,17 +115,55 @@ fun CocktailListScreen(onCocktailClick: (String) -> Unit){
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(filteredCocktails) { cocktail ->
-                CocktailItem(
-                    cocktail = cocktail,
-                    onClick = { onCocktailClick(cocktail.id) })
+        if (cocktails.isEmpty()) {
+            // Wyświetl informację, gdy lista jest pusta
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    "Brak koktajli do wyświetlenia",
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            repository.resetDatabase()
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text("Zresetuj bazę danych")
+                }
+            }
+        } else {
+            // Wyświetl grid z koktajlami
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(8.dp)
+            ) {
+                items(filteredCocktails) { cocktail ->
+                    CocktailItem(
+                        cocktail = cocktail,
+                        onClick = { onCocktailClick(cocktail.id) })
+                }
             }
         }
     }
@@ -106,24 +175,57 @@ fun CocktailItem(cocktail: Cocktail, onClick: () -> Unit){
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Menu,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
+        Column {
+            // Obrazek koktajlu z placeholderem
+            SubcomposeAsyncImage(
+                model = cocktail.imageUrl,
+                contentDescription = cocktail.name,
+                loading = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    }
+                },
+                error = {
+                    // Placeholder gdy obrazek nie może zostać załadowany
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.fillMaxSize(0.5f)
+                        )
+                    }
+                },
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
             )
-            Spacer(modifier = Modifier.width(16.dp))
+
+            // Nazwa koktajlu
             Text(
                 text = cocktail.name,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.weight(1f)
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
             )
         }
     }
