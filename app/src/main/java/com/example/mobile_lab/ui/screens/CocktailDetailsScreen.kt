@@ -26,12 +26,16 @@ import androidx.compose.ui.unit.dp
 import com.example.mobile_lab.data.CocktailRepository
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.layout.ContentScale
+import android.content.Intent
+import android.net.Uri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mobile_lab.model.Cocktail
@@ -60,6 +64,33 @@ fun CocktailDetailsScreen(cocktailId: String, onNavigateBack: () -> Unit){
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             )
+        },
+        floatingActionButton = {
+            if (cocktail != null) {
+                FloatingActionButton(
+                    onClick = {
+                        // Przygotowanie treści SMS ze składnikami
+                        val smsBody = buildString {
+                            append("Składniki dla koktajlu ${cocktail!!.name}:\n\n")
+                            cocktail!!.ingredients.forEach { ingredient ->
+                                append("- ${ingredient.name}: ${ingredient.amount}\n")
+                            }
+                        }
+
+                        // Utworzenie i uruchomienie intencji SMS
+                        val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("smsto:")
+                            putExtra("sms_body", smsBody)
+                        }
+                        context.startActivity(smsIntent)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Wyślij składniki przez SMS"
+                    )
+                }
+            }
         }
     ) { paddingValues ->
         if (cocktail != null) {
@@ -146,3 +177,5 @@ fun CocktailDetails(cocktail: Cocktail, modifier: Modifier = Modifier){
         }
     }
 }
+
+

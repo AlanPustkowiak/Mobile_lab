@@ -1,5 +1,6 @@
 package com.example.mobile_lab.ui.screens
 
+import android.widget.ImageView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -46,13 +48,19 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.example.mobile_lab.data.CocktailRepository
 import com.example.mobile_lab.model.Cocktail
+import com.example.mobile_lab.ui.theme.ThemeViewModel
+import androidx.compose.ui.res.painterResource
+import com.example.mobile_lab.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CocktailListScreen(onCocktailClick: (String) -> Unit){
+fun CocktailListScreen(
+    onCocktailClick: (String) -> Unit,
+    themeViewModel: ThemeViewModel
+){
     val context = LocalContext.current
     val repository = remember { CocktailRepository(context) }
     val cocktails by repository.getAllCocktails().collectAsState(initial = emptyList())
@@ -85,26 +93,24 @@ fun CocktailListScreen(onCocktailClick: (String) -> Unit){
                     }
                 },
                 actions = {
-                    if (!isSearching.value) {
-                        // Przycisk resetowania bazy danych
-                        IconButton(
-                            onClick = {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    repository.resetDatabase()
-                                }
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = "Resetuj bazę danych"
-                            )
-                        }
+                    // Przycisk zmiany motywu
+                    IconButton(onClick = { themeViewModel.toggleTheme() }) {
+                        Icon(
+                            painter = painterResource(
+                                id = if (themeViewModel.isDarkTheme)
+                                    R.drawable.light_mode_24dp_e3e3e3_fill0_wght400_grad0_opsz24
+                                else
+                                    R.drawable.dark_mode_24dp_e3e3e3_fill0_wght400_grad0_opsz24
+                            ),
+                            contentDescription = if (themeViewModel.isDarkTheme) "Tryb jasny" else "Tryb ciemny",
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
 
                     // Przycisk wyszukiwania
                     IconButton(onClick = { isSearching.value = !isSearching.value }) {
                         Icon(
-                            imageVector = if (isSearching.value) Icons.Default.ShoppingCart else Icons.Default.Search,
+                            imageVector = if (isSearching.value) Icons.Default.Clear else Icons.Default.Search,
                             contentDescription = "Wyszukaj"
                         )
                     }
@@ -230,3 +236,4 @@ fun CocktailItem(cocktail: Cocktail, onClick: () -> Unit){
         }
     }
 }
+

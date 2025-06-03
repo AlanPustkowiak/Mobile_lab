@@ -8,9 +8,10 @@ import com.example.mobile_lab.ui.screens.CocktailDetailsScreen
 import com.example.mobile_lab.ui.screens.CocktailListScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.example.mobile_lab.ui.theme.ThemeViewModel
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(themeViewModel: ThemeViewModel) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "cocktailList"){
@@ -18,7 +19,8 @@ fun AppNavigation() {
             CocktailListScreen(
                 onCocktailClick = { cocktailId ->
                     navController.navigate("cocktailDetail/$cocktailId")
-                }
+                },
+                themeViewModel = themeViewModel
             )
         }
         composable(
@@ -36,3 +38,4 @@ fun AppNavigation() {
         }
     }
 }
+
