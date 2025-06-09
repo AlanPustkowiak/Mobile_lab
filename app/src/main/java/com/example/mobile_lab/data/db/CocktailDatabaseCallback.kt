@@ -32,16 +32,32 @@ class CocktailDatabaseCallback(
         }
     }
 
-    private suspend fun populateDatabase(context: Context){
+    // Dodanie metody do ponownego załadowania przykładowych drinków przy każdym uruchomieniu
+    override fun onOpen(db: SupportSQLiteDatabase) {
+        super.onOpen(db)
+        CoroutineScope(Dispatchers.IO).launch {
+            populateDatabase(context, forceRefresh = true)
+        }
+    }
+
+    private suspend fun populateDatabase(context: Context, forceRefresh: Boolean = false){
         try {
             val database = CocktailDatabase.getDatabase(context)
             val cocktailDao = database.cocktailDao()
 
-            // Sprawdzenie czy baza jest już wypełniona
+            // Sprawdzenie czy baza jest już wypełniona i czy nie wymuszamy odświeżenia
             val existingCount = cocktailDao.getCocktailCount()
             if (existingCount > 0) {
-                Log.d("CocktailDatabase", "Baza danych zawiera już $existingCount koktajli, pomijam wypełnianie")
-                return
+                if (!forceRefresh) {
+                    Log.d("CocktailDatabase", "Baza danych zawiera już $existingCount koktajli, pomijam wypełnianie")
+                    return
+                } else {
+                    Log.d("CocktailDatabase", "Usuwam istniejące koktajle przed ponownym załadowaniem")
+                    // Usuwamy wszystkie powiązane dane w odpowiedniej kolejności
+                    cocktailDao.deleteAllSteps()
+                    cocktailDao.deleteAllIngredients()
+                    cocktailDao.deleteAllCocktails()
+                }
             }
 
             val inputStream = context.resources.openRawResource(R.raw.sample_cocktails)

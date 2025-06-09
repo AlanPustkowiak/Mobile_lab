@@ -2,7 +2,7 @@
   {
     "id": "mojito",
     "name": "Mojito",
-    "imageUrl": "https://images.immediate.co.uk/production/volatile/sites/60/2024/10/sigma-cf0a77f.jpg?quality=90&crop=149px,0px,1621px,1080px&resize=980,654",
+    "imageUrl": "https://cdn.craft.cloud/224393fa-1975-4d80-9067-ada3cb5948ca/assets/detail_Skinny_Mojito_4_2022.jpg",
     "ingredients": [
       {"name": "Biały rum", "amount": "60 ml"},
       {"name": "Sok z limonki", "amount": "30 ml"},
@@ -20,7 +20,7 @@
   {
     "id": "margarita",
     "name": "Margarita",
-    "imageUrl": null,
+    "imageUrl": "https://lh6.googleusercontent.com/proxy/dIeNSzph151c2TsfXKL5Cor7fSL4RJHzM36SDdRKrJ4hiEycqEYvZT5uxwaes1Ah60OGsI8_wSt4nxwWo8MFOgsWJag8Q-B8irZEzTRZ1notAox9ZcIx9Yj_U4Ah",
     "ingredients": [
       {"name": "Tequila", "amount": "50 ml"},
       {"name": "Triple sec", "amount": "25 ml"},
@@ -36,7 +36,7 @@
   {
     "id": "old_fashioned",
     "name": "Old Fashioned",
-    "imageUrl": null,
+    "imageUrl": "https://www.jimbeam.com/sites/default/files/styles/original/public/2024-07/jim-beam-cocktail-old-fashioned.jpg.webp?itok=qMooiG_s",
     "ingredients": [
       {"name": "Bourbon", "amount": "60 ml"},
       {"name": "Cukier trzcinowy", "amount": "1 kostka"},
